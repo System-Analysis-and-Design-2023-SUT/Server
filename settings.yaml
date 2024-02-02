@@ -1,0 +1,15 @@
+global:
+  name: sad-server
+  readTimeout: 2m
+  readHeaderTimeout: 2m
+  writeTimeout: 2m
+  idleTimeout: 2m
+  maxHeaderBytes: 8196
+  apiPort: 8080
+  memberlistPort: 8081
+  gossopingPort: 8082
+  environment: test # supports: "debug" or "release" or "test"
+replica:
+  hostname:
+  - localhost:8081
+  - localhost:9081
