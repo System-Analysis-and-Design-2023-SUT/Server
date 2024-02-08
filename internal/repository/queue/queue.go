@@ -27,6 +27,9 @@ func NewRepository(st *settings.Settings, helper *helper.Helper, q *models.Queue
 	if q == nil {
 		return nil, errors.New("queue should not be nil")
 	}
+	if s == nil {
+		return nil, errors.New("subscriber should not be nil")
+	}
 
 	d, err := helper.GetQueue()
 	if err != nil {
