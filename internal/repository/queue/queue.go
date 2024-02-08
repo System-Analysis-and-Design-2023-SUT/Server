@@ -32,6 +32,7 @@ func NewRepository(st *settings.Settings, helper *helper.Helper, q *models.Queue
 	if err != nil {
 		fmt.Println(err)
 	} else {
+		fmt.Println("Get queue")
 		err := q.BulkPush(d)
 		return &Repository{}, err
 	}

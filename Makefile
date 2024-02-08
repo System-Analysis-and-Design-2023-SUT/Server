@@ -48,3 +48,7 @@ build:
 
 run:
 	./bin/app
+
+tag:
+	git tag -a v$(tag) -m "set version"
+	git push origin v$(tag)
