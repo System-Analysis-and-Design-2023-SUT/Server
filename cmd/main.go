@@ -53,6 +53,7 @@ func main() {
 		logger.FatalS("Setting file is not valid", "error", err.Error())
 	}
 
+	fmt.Printf("I'm %s\n", st.Replica.Hostname)
 	gossopingServer := setupGossopingServers(&st)
 	go func() {
 		runGossopingServer(gossopingServer, st.Global.GossopingPort, "gossoping_server")
