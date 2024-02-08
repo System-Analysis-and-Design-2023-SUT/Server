@@ -102,6 +102,7 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	config := memberlist.DefaultLocalConfig()
 	config.BindPort = settings.Global.MemberlistPort
 	config.BindAddr = settings.Replica.BindAddress
+	config.LogOutput = nil
 
 	config.Name = nodeName
 	list, err := memberlist.Create(config)
@@ -120,9 +121,9 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 			nodeName := fmt.Sprintf("%s-%d:8081", removeSuffix(host), id)
 			_, err := list.Join([]string{nodeName})
 			if err != nil {
-				fmt.Printf("Error joining Cluster node %s with error %v", nodeName, err)
+				fmt.Printf("Error joining Cluster node %s with error %v\n", nodeName, err)
 			} else {
-				fmt.Printf("Connected to %s", nodeName)
+				fmt.Printf("Connected to %s\n", nodeName)
 			}
 		}
 	}
