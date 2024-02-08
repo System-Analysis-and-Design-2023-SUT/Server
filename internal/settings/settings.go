@@ -24,7 +24,8 @@ type Settings struct {
 		Environment       string        `yaml:"environment" env:"CONFIG_MODE" env-default:"file" env-description:"Execution mode of Gin framework"`
 	} `yaml:"global"`
 	Replica struct {
-		Hostname []string `yaml:"hostname" env:"HOSTNAME" env-default:"localhost" env-description:"Base hostname of replicas"`
+		Hostname    []string `yaml:"hostname" env:"HOSTNAME" env-default:"localhost" env-description:"Base hostname of replicas"`
+		MemberCount int      `yaml:"memberCount" env:"MEMBER_COUNT" env-default:"3" env-description:"Count of member list"`
 	} `yaml:"replica"`
 }
 

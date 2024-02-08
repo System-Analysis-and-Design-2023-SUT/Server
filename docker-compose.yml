@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: ghcr.io/system-analysis-and-design-2023-sut/server:1.2.2
+    image: ghcr.io/system-analysis-and-design-2023-sut/server:1.3.0
     deploy:
       replicas: 3
       restart_policy:
@@ -10,3 +10,6 @@ services:
     hostname: sad-server-{{.Task.Slot}}
     ports:
       - "8080:8080"
+      - "8081:8081"
+      - "8082:8082"
+

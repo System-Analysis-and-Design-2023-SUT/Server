@@ -12,3 +12,4 @@ global:
 replica:
   hostname:
   - sad-server
+  memberCount: 3
