@@ -14,6 +14,6 @@ RUN go build -tags=nomsgpack -a -installsuffix nocgo -o /app cmd/main.go
 FROM debian:buster-slim
 
 COPY --from=builder /app /opt/server/
-COPY /go/src/server/settings.yml /opt/server/
+COPY settings.yml /opt/server/
 
 ENTRYPOINT ["/opt/server/app"]
