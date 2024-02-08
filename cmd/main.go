@@ -101,7 +101,7 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 
 	config := memberlist.DefaultLocalConfig()
 	config.BindPort = settings.Global.MemberlistPort
-	config.BindAddr = "127.0.0.1"
+	config.BindAddr = settings.Replica.BindAddress
 
 	config.Name = nodeName
 	list, err := memberlist.Create(config)

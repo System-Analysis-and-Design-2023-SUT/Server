@@ -13,3 +13,4 @@ replica:
   hostname:
   - sad-server
   memberCount: 3
+  bindAddress: 0.0.0.0

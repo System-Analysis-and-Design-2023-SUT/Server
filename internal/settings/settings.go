@@ -26,6 +26,7 @@ type Settings struct {
 	Replica struct {
 		Hostname    []string `yaml:"hostname" env:"HOSTNAME" env-default:"localhost" env-description:"Base hostname of replicas"`
 		MemberCount int      `yaml:"memberCount" env:"MEMBER_COUNT" env-default:"3" env-description:"Count of member list"`
+		BindAddress string   `yaml:"bindAddress" env:"BIND_ADDRESS" env-default:"0.0.0.0" env-description:"Bind address of memberlist"`
 	} `yaml:"replica"`
 }
 
