@@ -7,8 +7,6 @@ services:
       replicas: 3
       restart_policy:
         condition: any
-      placement:
-        strategy:	Spread
       updateconfig:
         parallelism: 1
         delay: 10s
