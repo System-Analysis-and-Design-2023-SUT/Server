@@ -6,7 +6,13 @@ services:
     deploy:
       replicas: 3
       restart_policy:
-        condition: on-failure
+        condition: any
+      placement:
+        strategy:	Spread
+      updateconfig:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
     hostname: sad-server-{{.Task.Slot}}
     ports:
       - "8080:8080"
