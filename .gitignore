@@ -22,3 +22,8 @@ go.work
 
 # Bin
 bin/*
+
+# Settings
+settings*.yaml
+settings*.yml
+!settings.yaml
