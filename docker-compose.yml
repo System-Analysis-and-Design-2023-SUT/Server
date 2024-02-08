@@ -6,7 +6,7 @@ services:
     deploy:
       replicas: 3
       restart_policy:
-        condition: always
+        condition: any
       update_config:
         parallelism: 1
         delay: 10s
