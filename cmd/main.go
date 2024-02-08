@@ -120,9 +120,9 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 			nodeName := fmt.Sprintf("%s-%d:8081", removeSuffix(host), id)
 			_, err := list.Join([]string{nodeName})
 			if err != nil {
-				logger.Infof("Error joining Cluster node %s with error %v", nodeName, err)
+				fmt.Printf("Error joining Cluster node %s with error %v", nodeName, err)
 			} else {
-				logger.Infof("Connected to %s", nodeName)
+				fmt.Printf("Connected to %s", nodeName)
 			}
 		}
 	}
