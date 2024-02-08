@@ -2,23 +2,11 @@ version: '3.8'
 
 services:
   app:
-    image: ghcr.io/system-analysis-and-design-2023-sut/server:1.5.0
+    image: ghcr.io/system-analysis-and-design-2023-sut/server:1.2.2
     deploy:
       replicas: 3
       restart_policy:
-        condition: any
-      update_config:
-        parallelism: 1
-        delay: 10s
-        order: stop-first
+        condition: on-failure
     hostname: sad-server-{{.Task.Slot}}
     ports:
       - "8080:8080"
-      - "8081:8081"
-      - "8082:8082"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/-/live"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
