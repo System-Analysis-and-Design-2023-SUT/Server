@@ -37,7 +37,9 @@ func NewRepository(st *settings.Settings, helper *helper.Helper, q *models.Queue
 	} else {
 		fmt.Println("Get queue")
 		err := q.BulkPush(d)
-		return &Repository{}, err
+		if err != nil {
+			return &Repository{}, err
+		}
 	}
 
 	return &Repository{
@@ -50,7 +52,7 @@ func NewRepository(st *settings.Settings, helper *helper.Helper, q *models.Queue
 
 // Push will save data into queue
 func (r *Repository) Push(data models.Data, force bool) (models.Data, error) {
-	if r.subscriber != nil && len(r.subscriber.List) > 0 {
+	if len(r.subscriber.List) > 0 {
 		err := r.helper.Read(data)
 		if err != nil {
 			return models.Data{}, err
@@ -59,6 +61,7 @@ func (r *Repository) Push(data models.Data, force bool) (models.Data, error) {
 		err = r.subscriber.Send(data)
 		return data, err
 	}
+
 	err := r.queue.Push(data)
 	if err != nil {
 		return models.Data{}, err

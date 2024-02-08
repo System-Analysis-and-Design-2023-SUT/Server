@@ -2,7 +2,6 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
 	"math/rand"
 
 	"github.com/gorilla/websocket"
@@ -24,12 +23,6 @@ type Queue struct {
 }
 
 func (q *Queue) Push(data Data) error {
-	fmt.Println("TTTTTTTTTT")
-	fmt.Println(data)
-	fmt.Println(q)
-	fmt.Println(q.KeySet)
-	fmt.Println(q.KeySet[data.Key])
-
 	if _, ok := q.KeySet[data.Key]; ok {
 		return ErrKeyExist
 	}
