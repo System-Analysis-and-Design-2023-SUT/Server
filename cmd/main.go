@@ -104,6 +104,7 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	config.BindAddr = settings.Replica.BindAddress
 	config.LogOutput = nil
 
+	nodeName := settings.Replica.Hostname[0]
 	config.Name = nodeName
 	list, err := memberlist.Create(config)
 	if err != nil {
