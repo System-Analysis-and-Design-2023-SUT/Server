@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"regexp"
 	"strconv"
 	"syscall"
 	"time"
@@ -89,6 +90,11 @@ func main() {
 
 }
 
+func removeSuffix(s string) string {
+	re := regexp.MustCompile(`-\d+$`)
+	return re.ReplaceAllString(s, "")
+}
+
 func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	logger.InfoS("Initializing gossoping server.")
 	logger.Infof("memberlist_server Starting listening on port %d.", settings.Global.MemberlistPort)
@@ -109,7 +115,7 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 		id := 0
 		for {
 			id++
-			nodeName := fmt.Sprintf("%s-%d:8081", host, id)
+			nodeName := fmt.Sprintf("%s-%d:8081", removeSuffix(host), id)
 			_, err := list.Join([]string{nodeName})
 			if err != nil {
 				logger.Errorf("Error joining Cluster node %s with error %v", nodeName, err)
