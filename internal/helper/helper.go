@@ -71,9 +71,6 @@ func (h *Helper) GetQueue() ([]byte, error) {
 		return body, nil
 	}
 
-	for _, m := range h.list.Members() {
-		fmt.Println(m.Name, m.Addr)
-	}
 	return nil, ErrQueueNotFound
 }
 

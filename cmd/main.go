@@ -128,6 +128,18 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 			}
 		}
 	}
+	for _, m := range list.Members() {
+		fmt.Println("Addr", m.Addr)
+		fmt.Println("Name", m.Name)
+		fmt.Println("Port", m.Port)
+		fmt.Println("State", m.State)
+		fmt.Println("Address", m.Address())
+		fmt.Println("FullAddress", m.FullAddress())
+		fmt.Println("Mask", m.Addr.DefaultMask())
+		fmt.Println("FullAddressAddr", m.FullAddress().Addr)
+		fmt.Println("FullAddressName", m.FullAddress().Name)
+	}
+
 	return list
 }
 
