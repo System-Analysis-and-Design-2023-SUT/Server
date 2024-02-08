@@ -113,6 +113,10 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 
 	for _, host := range settings.Replica.Hostname {
 		for id := 1; id <= settings.Replica.MemberCount; id++ {
+			if fmt.Sprintf("%s-%d", removeSuffix(host), id) == host {
+				continue
+			}
+
 			nodeName := fmt.Sprintf("%s-%d:8081", removeSuffix(host), id)
 			_, err := list.Join([]string{nodeName})
 			if err != nil {
