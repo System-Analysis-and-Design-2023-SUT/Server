@@ -107,7 +107,6 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	n, err := list.Join(settings.Replica.Hostname)
 	if err != nil {
 		logger.Fatalf("Error joining Cluster node with error %v", err)
-		return nil
 	} else {
 		logger.Infof("Connected to %d nodes.", n)
 	}

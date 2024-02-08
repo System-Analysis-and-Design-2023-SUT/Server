@@ -12,4 +12,3 @@ global:
 replica:
   hostname:
   - localhost:8081
-  - localhost:9081
