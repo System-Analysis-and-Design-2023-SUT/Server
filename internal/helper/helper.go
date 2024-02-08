@@ -19,8 +19,8 @@ func (h *Helper) Read(data models.Data) error {
 			continue
 		}
 
-		var port = string(m.Meta)
-		response, err := http.Get(fmt.Sprintf("http://%s:%s/_pull?key=%s", m.Addr, port, data.Key))
+		var address = string(m.Meta)
+		response, err := http.Get(fmt.Sprintf("http://%s/_pull?key=%s", address, data.Key))
 		if err != nil {
 			return err
 		}
@@ -36,8 +36,8 @@ func (h *Helper) Write(data models.Data) error {
 			continue
 		}
 
-		var port = string(m.Meta)
-		response, err := http.Post(fmt.Sprintf("http://%s:%s/_push?key=%s&value=%s", m.Addr, port, data.Key, data.Value),
+		var address = string(m.Meta)
+		response, err := http.Post(fmt.Sprintf("http://%s/_push?key=%s&value=%s", address, data.Key, data.Value),
 			"application/json",
 			nil,
 		)
@@ -56,8 +56,8 @@ func (h *Helper) GetQueue() ([]byte, error) {
 			continue
 		}
 
-		var port = string(m.Meta)
-		response, err := http.Get(fmt.Sprintf("http://%s:%s/queue", m.Addr, port))
+		var address = string(m.Meta)
+		response, err := http.Get(fmt.Sprintf("http://%s:%s/queue", address))
 		if err != nil {
 			return nil, err
 		}

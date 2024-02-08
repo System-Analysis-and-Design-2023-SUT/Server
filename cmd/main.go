@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/signal"
 	"regexp"
-	"strconv"
 	"syscall"
 	"time"
 
@@ -112,8 +111,8 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 		logger.Fatalf("Error initializing Cluster node with error %v", err)
 		return nil
 	}
-	list.LocalNode().Meta = []byte(strconv.Itoa(settings.Global.APIPort))
 
+	list.LocalNode().Meta = []byte(fmt.Sprintf("%s:%d", settings.Replica.Hostname[0], settings.Global.APIPort))
 	for _, host := range settings.Replica.Hostname {
 		for id := 1; id <= settings.Replica.MemberCount; id++ {
 			if fmt.Sprintf("%s-%d", removeSuffix(host), id) == host {
