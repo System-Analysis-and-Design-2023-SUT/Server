@@ -39,6 +39,9 @@ targets: ## Lists targets
 	expand -t15
 	@echo
 
+test:
+	go test ./... -coverprofile cover.out
+
 build:
 	go env -w GO111MODULE="on"
 	go build -a -o bin/app cmd/main.go
