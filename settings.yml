@@ -11,4 +11,4 @@ global:
   environment: test # supports: "debug" or "release" or "test"
 replica:
   hostname:
-  - localhost:8081
+  - sad-server

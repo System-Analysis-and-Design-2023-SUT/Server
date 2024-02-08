@@ -104,11 +104,18 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 		return nil
 	}
 	list.LocalNode().Meta = []byte(strconv.Itoa(settings.Global.APIPort))
-	n, err := list.Join(settings.Replica.Hostname)
-	if err != nil {
-		logger.Errorf("Error joining Cluster node with error %v", err)
-	} else {
-		logger.Infof("Connected to %d nodes.", n)
+
+	id := 0
+	for {
+		id++
+		nodeName := fmt.Sprintf("%s-%d:8081", settings.Replica.Hostname, id)
+		_, err := list.Join([]string{nodeName})
+		if err != nil {
+			logger.Errorf("Error joining Cluster node %s with error %v", nodeName, err)
+			break
+		} else {
+			logger.Infof("Connected to %s", nodeName)
+		}
 	}
 	return list
 }
