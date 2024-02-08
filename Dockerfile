@@ -13,6 +13,8 @@ RUN go build -tags=nomsgpack -a -installsuffix nocgo -o /app cmd/main.go
 
 FROM debian:buster-slim
 
+RUN apt update && apt install -y curl
+
 COPY --from=builder /app /opt/server/
 COPY settings.yml /opt/server/
 
