@@ -57,7 +57,7 @@ func (h *Helper) GetQueue() ([]byte, error) {
 		}
 
 		var address = string(m.Meta)
-		response, err := http.Get(fmt.Sprintf("http://%s:%s/queue", address))
+		response, err := http.Get(fmt.Sprintf("http://%s/queue", address))
 		if err != nil {
 			return nil, err
 		}
