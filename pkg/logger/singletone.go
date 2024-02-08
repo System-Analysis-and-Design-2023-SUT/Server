@@ -92,31 +92,31 @@ func CheckAndCreateLogger(name string, isProduction bool) (*zap.Logger, error) {
 
 // Info logs with info level
 func Info(msg string, keysAndValues ...interface{}) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.Info(msg, keysAndValues...)
 }
 
 // Debug logs with debug level
 func Debug(msg string, keysAndValues ...interface{}) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.Debug(msg, keysAndValues...)
 }
 
 // Error logs with error level
 func Error(msg string, keysAndValues ...interface{}) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.Error(msg, keysAndValues...)
 }
 
 // Warn logs with warn level
 func Warn(msg string, keysAndValues ...interface{}) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.Warn(msg, keysAndValues...)
 }
 
 // Fatal logs with fatal level
 func Fatal(msg string, keysAndValues ...interface{}) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.Fatal(msg, keysAndValues...)
 }
 
@@ -124,30 +124,30 @@ func Fatal(msg string, keysAndValues ...interface{}) {
 
 // Info logs with info level
 func InfoS(msg string, keysAndValues ...string) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.InfoS(msg, keysAndValues...)
 }
 
 // Debug logs with debug level
 func DebugS(msg string, keysAndValues ...string) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.DebugS(msg, keysAndValues...)
 }
 
 // Error logs with error level
 func ErrorS(msg string, keysAndValues ...string) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.ErrorS(msg, keysAndValues...)
 }
 
 // Warn logs with warn level
 func WarnS(msg string, keysAndValues ...string) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.WarnS(msg, keysAndValues...)
 }
 
 // Fatal logs with fatal level
 func FatalS(msg string, keysAndValues ...string) {
-	CheckAndCreateLogger("", true)
+	_, _ = CheckAndCreateLogger("", true)
 	sugar.FatalS(msg, keysAndValues...)
 }

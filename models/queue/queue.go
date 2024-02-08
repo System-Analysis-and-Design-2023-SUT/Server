@@ -71,7 +71,10 @@ func (q *Queue) BulkPush(data []byte) error {
 	}
 
 	for _, l := range tmp.List {
-		q.Push(l)
+		err := q.Push(l)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

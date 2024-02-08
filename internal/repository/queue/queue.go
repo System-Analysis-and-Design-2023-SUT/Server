@@ -32,7 +32,8 @@ func NewRepository(st *settings.Settings, helper *helper.Helper, q *models.Queue
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		q.BulkPush(d)
+		err := q.BulkPush(d)
+		return &Repository{}, err
 	}
 
 	return &Repository{
@@ -51,8 +52,8 @@ func (r *Repository) Push(data models.Data, force bool) (models.Data, error) {
 			return models.Data{}, err
 		}
 
-		r.subscriber.Send(data)
-		return data, nil
+		err = r.subscriber.Send(data)
+		return data, err
 	}
 	err := r.queue.Push(data)
 	if err != nil {

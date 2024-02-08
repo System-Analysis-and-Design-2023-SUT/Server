@@ -2,7 +2,6 @@ package queue
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -76,31 +75,35 @@ func (q *Queue) subscribeEndpoint() gin.HandlerFunc {
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		addr := conn.RemoteAddr().String()
 		if err != nil {
-			fmt.Println(err)
+			logger.Error(err.Error())
 			return
 		}
 		defer func() {
 			conn.Close()
-			q.service.Unsubscribe(conn, addr)
+			err := q.service.Unsubscribe(conn, addr)
+			if err != nil {
+				logger.Error(err.Error())
+				return
+			}
 		}()
 
 		for {
 			_, msg, err := conn.ReadMessage()
 			if err != nil {
-				fmt.Println(err)
+				logger.Error(err.Error())
 				return
 			}
 
 			if bytes.Equal(msg, []byte("subscribe\n")) {
 				response := q.service.Subscribe(conn, addr)
 				if err := conn.WriteMessage(websocket.TextMessage, []byte(response)); err != nil {
-					fmt.Println(err)
+					logger.Error(err.Error())
 					return
 				}
 
 			} else {
 				if err := conn.WriteMessage(websocket.TextMessage, []byte("Invalid Message")); err != nil {
-					fmt.Println(err)
+					logger.Error(err.Error())
 					return
 				}
 			}
