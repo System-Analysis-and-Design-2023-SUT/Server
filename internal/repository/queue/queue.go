@@ -50,7 +50,7 @@ func NewRepository(st *settings.Settings, helper *helper.Helper, q *models.Queue
 
 // Push will save data into queue
 func (r *Repository) Push(data models.Data, force bool) (models.Data, error) {
-	if len(r.subscriber.Member) > 0 {
+	if r.subscriber != nil && len(r.subscriber.List) > 0 {
 		err := r.helper.Read(data)
 		if err != nil {
 			return models.Data{}, err
