@@ -10,7 +10,7 @@ services:
       update_config:
         parallelism: 1
         delay: 10s
-        order: start-first
+        order: stop-first
     hostname: sad-server-{{.Task.Slot}}
     ports:
       - "8080:8080"
