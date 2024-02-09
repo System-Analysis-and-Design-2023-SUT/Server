@@ -22,12 +22,14 @@ func (h *Helper) Read(data models.Data) error {
 		var address = string(m.Meta)
 		response, err := http.Get(fmt.Sprintf("http://%s/_pull?key=%s", address, data.Key))
 		if err != nil {
-			return err
+			continue
 		}
+
 		defer response.Body.Close()
+		return nil
 	}
 
-	return nil
+	return ErrNodesAreNotReachable
 }
 
 func (h *Helper) Write(data models.Data) error {
@@ -42,12 +44,14 @@ func (h *Helper) Write(data models.Data) error {
 			nil,
 		)
 		if err != nil {
-			return err
+			continue
 		}
+
 		defer response.Body.Close()
+		return nil
 	}
 
-	return nil
+	return ErrNodesAreNotReachable
 }
 
 func (h *Helper) GetQueue() ([]byte, error) {
@@ -59,13 +63,13 @@ func (h *Helper) GetQueue() ([]byte, error) {
 		var address = string(m.Meta)
 		response, err := http.Get(fmt.Sprintf("http://%s/queue", address))
 		if err != nil {
-			return nil, err
+			continue
 		}
 		defer response.Body.Close()
 
 		body, err := io.ReadAll(response.Body)
 		if err != nil {
-			return nil, err
+			continue
 		}
 
 		return body, nil
