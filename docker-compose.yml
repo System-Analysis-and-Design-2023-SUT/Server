@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: ghcr.io/system-analysis-and-design-2023-sut/server:1.6.0
+    image: ghcr.io/system-analysis-and-design-2023-sut/server:1.6.1
     deploy:
       replicas: 3
       restart_policy:
@@ -10,7 +10,7 @@ services:
       update_config:
         parallelism: 1
         delay: 10s
-        order: stop-first
+        order: start-first
     hostname: sad-server-{{.Task.Slot}}
     ports:
       - "8080:8080"

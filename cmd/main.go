@@ -119,6 +119,12 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 				continue
 			}
 
+			ips, er := net.LookupIP(settings.Replica.Hostname[0])
+			if er != nil {
+				fmt.Println("Error:", er)
+			}
+			fmt.Println(ips)
+
 			nodeName := fmt.Sprintf("%s-%d:8081", removeSuffix(host), id)
 			_, err := list.Join([]string{nodeName})
 			if err != nil {
