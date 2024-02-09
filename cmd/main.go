@@ -119,12 +119,6 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 				continue
 			}
 
-			ips, er := net.LookupIP(settings.Replica.Hostname[0])
-			if er != nil {
-				fmt.Println("Error:", er)
-			}
-			fmt.Println(ips)
-
 			nodeName := fmt.Sprintf("%s-%d:8081", removeSuffix(host), id)
 			_, err := list.Join([]string{nodeName})
 			if err != nil {
@@ -135,6 +129,13 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 		}
 	}
 	for _, m := range list.Members() {
+		ips, er := net.LookupIP(m.FullAddress().Name)
+		if er != nil {
+			fmt.Println("Error:", er)
+		}
+		fmt.Println(ips)
+		m.Addr = ips[0]
+
 		fmt.Println("Addr", m.Addr)
 		fmt.Println("Name", m.Name)
 		fmt.Println("Port", m.Port)
@@ -143,7 +144,7 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 		fmt.Println("FullAddress", m.FullAddress())
 		fmt.Println("Mask", m.Addr.DefaultMask())
 		fmt.Println("FullAddressAddr", m.FullAddress().Addr)
-		fmt.Println("FullAddressName", m.FullAddress().Name)
+		fmt.Println("FullAddressName")
 	}
 
 	return list
