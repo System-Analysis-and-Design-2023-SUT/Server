@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"regexp"
 	"syscall"
 	"time"
 
@@ -90,9 +89,18 @@ func main() {
 
 }
 
-func removeSuffix(s string) string {
-	re := regexp.MustCompile(`-\d+$`)
-	return re.ReplaceAllString(s, "")
+// func removeSuffix(s string) string {
+// 	re := regexp.MustCompile(`-\d+$`)
+// 	return re.ReplaceAllString(s, "")
+// }
+
+func inc(ip net.IP) {
+	for j := len(ip) - 1; j >= 0; j-- {
+		ip[j]++
+		if ip[j] > 0 {
+			break
+		}
+	}
 }
 
 func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
@@ -113,28 +121,28 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	}
 
 	list.LocalNode().Meta = []byte(fmt.Sprintf("%s:%d", settings.Replica.Hostname[0], settings.Global.APIPort))
-	for _, host := range settings.Replica.Hostname {
-		for id := 1; id <= settings.Replica.MemberCount; id++ {
-			if fmt.Sprintf("%s-%d", removeSuffix(host), id) == host {
-				continue
-			}
+	ip, ipnet, err := net.ParseCIDR(settings.Replica.Subnet)
+	if err != nil {
+		fmt.Println("Error parsing subnet:", err)
+	}
 
-			nodeName := fmt.Sprintf("%s-%d:8081", removeSuffix(host), id)
-			_, err := list.Join([]string{nodeName})
-			if err != nil {
-				fmt.Printf("Error joining Cluster node %s with error %v\n", nodeName, err)
-			} else {
-				fmt.Printf("Connected to %s\n", nodeName)
-			}
+	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
+		fmt.Println(ip)
+		_, err := list.Join([]string{ip.String()})
+		if err != nil {
+			fmt.Printf("Error joining Cluster node %s with error %v\n", ip.String(), err)
+		} else {
+			fmt.Printf("Connected to %s\n", ip.String())
 		}
 	}
+
 	for _, m := range list.Members() {
-		ips, er := net.LookupIP(m.FullAddress().Name)
-		if er != nil {
-			fmt.Println("Error:", er)
-		}
-		fmt.Println(ips)
-		m.Addr = ips[0]
+		// ips, er := net.LookupIP(m.FullAddress().Name)
+		// if er != nil {
+		// 	fmt.Println("Error:", er)
+		// }
+		// fmt.Println(ips)
+		// m.Addr = ips[0]
 
 		fmt.Println("Addr", m.Addr)
 		fmt.Println("Name", m.Name)
