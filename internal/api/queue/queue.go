@@ -99,7 +99,19 @@ func (q *Queue) subscribeEndpoint() gin.HandlerFunc {
 			fmt.Println("OPEN CONNECTION")
 			// Proxy messages between connections
 			go proxyMessages(conn, remoteConn)
-			go proxyMessages(remoteConn, conn)
+			for {
+				t, msg, err := conn.ReadMessage()
+				if err != nil {
+					logger.Error(err.Error())
+					return
+				}
+
+				if err := remoteConn.WriteMessage(t, msg); err != nil {
+					logger.Error(err.Error())
+					return
+				}
+			}
+
 		} else {
 			conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 			addr := conn.RemoteAddr().String()
@@ -141,16 +153,16 @@ func (q *Queue) subscribeEndpoint() gin.HandlerFunc {
 	}
 }
 
-func proxyMessages(src, dest *websocket.Conn) {
+func proxyMessages(conn, remoteConn *websocket.Conn) {
 	for {
-		messageType, message, err := src.ReadMessage()
+		t, msg, err := remoteConn.ReadMessage()
 		if err != nil {
-			log.Println("Failed to read message:", err)
+			logger.Error(err.Error())
 			return
 		}
-		err = dest.WriteMessage(messageType, message)
-		if err != nil {
-			log.Println("Failed to write message:", err)
+
+		if err := conn.WriteMessage(t, msg); err != nil {
+			logger.Error(err.Error())
 			return
 		}
 	}
