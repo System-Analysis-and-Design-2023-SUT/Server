@@ -23,7 +23,7 @@ func NewAPIServer(settings *settings.Settings, helper *helper.Helper, q *models.
 		return nil, errors.Wrap(err, "could not initialize user service")
 	}
 
-	queueModule, err := queue.NewQueueModule(queueRepo, queueService)
+	queueModule, err := queue.NewQueueModule(queueRepo, queueService, settings, helper)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not initialize users module")
 	}

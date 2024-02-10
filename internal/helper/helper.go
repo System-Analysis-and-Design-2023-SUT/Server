@@ -74,6 +74,16 @@ func (h *Helper) GetQueue() ([]byte, error) {
 	return nil, ErrQueueNotFound
 }
 
+func (h *Helper) GetFirst() string {
+	for _, m := range h.list.Members() {
+		if m.Name == "sad-server-1" {
+			return m.Address()
+		}
+	}
+	fmt.Println("Can not get first node")
+	return ""
+}
+
 func NewHelper(list *memberlist.Memberlist) (*Helper, error) {
 	if list == nil {
 		return nil, ErrNilMemberlist

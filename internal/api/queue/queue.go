@@ -2,11 +2,14 @@ package queue
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/System-Analysis-and-Design-2023-SUT/Server/internal/helper"
 	repo "github.com/System-Analysis-and-Design-2023-SUT/Server/internal/repository/queue"
 	service "github.com/System-Analysis-and-Design-2023-SUT/Server/internal/services/queue"
+	"github.com/System-Analysis-and-Design-2023-SUT/Server/internal/settings"
 	logging "github.com/System-Analysis-and-Design-2023-SUT/Server/pkg/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -25,6 +28,8 @@ func init() {
 type Queue struct {
 	repository *repo.Repository
 	service    *service.Service
+	helper     *helper.Helper
+	st         *settings.Settings
 }
 
 func (q *Queue) RegisterRoutes(v1 *gin.RouterGroup) {
@@ -72,43 +77,82 @@ var upgrader = websocket.Upgrader{
 
 func (q *Queue) subscribeEndpoint() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-		addr := conn.RemoteAddr().String()
+		if q.st.Replica.Hostname[0] != "sad-server-1" {
+			fmt.Println("PROXY WS")
+			conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+			if err != nil {
+				log.Println("Failed to upgrade connection to WebSocket:", err)
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+			defer conn.Close()
+
+			// Connect to another server via WebSocket
+			remoteAddr := fmt.Sprintf("ws://%s/subscribe", q.helper.GetFirst()) // Replace with your remote server address
+			remoteConn, _, err := websocket.DefaultDialer.Dial(remoteAddr, nil)
+			if err != nil {
+				log.Println("Failed to connect to remote server:", err)
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+			defer remoteConn.Close()
+
+			// Proxy messages between connections
+			go proxyMessages(conn, remoteConn)
+			proxyMessages(remoteConn, conn)
+		} else {
+			conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+			addr := conn.RemoteAddr().String()
+			if err != nil {
+				logger.Error(err.Error())
+				return
+			}
+			defer func() {
+				conn.Close()
+				err := q.service.Unsubscribe(conn, addr)
+				if err != nil {
+					logger.Error(err.Error())
+					return
+				}
+			}()
+
+			for {
+				_, msg, err := conn.ReadMessage()
+				if err != nil {
+					logger.Error(err.Error())
+					return
+				}
+
+				if bytes.Equal(msg, []byte("subscribe\n")) {
+					response := q.service.Subscribe(conn, addr)
+					if err := conn.WriteMessage(websocket.TextMessage, []byte(response)); err != nil {
+						logger.Error(err.Error())
+						return
+					}
+
+				} else {
+					if err := conn.WriteMessage(websocket.TextMessage, []byte("Invalid Message")); err != nil {
+						logger.Error(err.Error())
+						return
+					}
+				}
+			}
+		}
+	}
+}
+
+func proxyMessages(src, dest *websocket.Conn) {
+	for {
+		messageType, message, err := src.ReadMessage()
 		if err != nil {
-			logger.Error(err.Error())
+			log.Println("Failed to read message:", err)
 			return
 		}
-		defer func() {
-			conn.Close()
-			err := q.service.Unsubscribe(conn, addr)
-			if err != nil {
-				logger.Error(err.Error())
-				return
-			}
-		}()
-
-		for {
-			_, msg, err := conn.ReadMessage()
-			if err != nil {
-				logger.Error(err.Error())
-				return
-			}
-
-			if bytes.Equal(msg, []byte("subscribe\n")) {
-				response := q.service.Subscribe(conn, addr)
-				if err := conn.WriteMessage(websocket.TextMessage, []byte(response)); err != nil {
-					logger.Error(err.Error())
-					return
-				}
-
-			} else {
-				if err := conn.WriteMessage(websocket.TextMessage, []byte("Invalid Message")); err != nil {
-					logger.Error(err.Error())
-					return
-				}
-			}
+		err = dest.WriteMessage(messageType, message)
+		if err != nil {
+			log.Println("Failed to write message:", err)
+			return
 		}
-
 	}
 }
 
@@ -118,7 +162,7 @@ func (q *Queue) copyEndpoint() gin.HandlerFunc {
 	}
 }
 
-func NewQueueModule(repo *repo.Repository, service *service.Service) (*Queue, error) {
+func NewQueueModule(repo *repo.Repository, service *service.Service, st *settings.Settings, h *helper.Helper) (*Queue, error) {
 	if repo == nil {
 		return nil, ErrNilQueueRepo
 	}
@@ -127,8 +171,14 @@ func NewQueueModule(repo *repo.Repository, service *service.Service) (*Queue, er
 		return nil, ErrNilQueueService
 	}
 
+	if st == nil {
+		return nil, ErrNilQueueService
+	}
+
 	return &Queue{
 		repository: repo,
 		service:    service,
+		helper:     h,
+		st:         st,
 	}, nil
 }
