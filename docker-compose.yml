@@ -14,11 +14,11 @@ services:
         delay: 10s
         order: stop-first
     hostname: sad-server-{{.Task.Slot}}
-    ports:
-      - "8080:8080"
-      - "8081:8081"
-      - "8082:8082"
-      - "8302:8302"
+    # ports:
+    #   - "8080:8080"
+    #   - "8081:8081"
+    #   - "8082:8082"
+    #   - "8302:8302"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/-/live"]
       interval: 10s
