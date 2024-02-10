@@ -154,7 +154,7 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 
 		response, err := http.Get(fmt.Sprintf("http://%s:8080/-/live", ip.String()))
 		if err != nil {
-			fmt.Println("Errorrr ", response.Status)
+			fmt.Println("Errorrr ", err)
 			continue
 		}
 		if response.Status != "200 OK" {
