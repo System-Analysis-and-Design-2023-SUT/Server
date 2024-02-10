@@ -89,17 +89,17 @@ func (q *Queue) subscribeEndpoint() gin.HandlerFunc {
 
 			// Connect to another server via WebSocket
 			remoteAddr := fmt.Sprintf("ws://%s/subscribe", q.helper.GetFirst()) // Replace with your remote server address
+			fmt.Println(remoteAddr)
 			remoteConn, _, err := websocket.DefaultDialer.Dial(remoteAddr, nil)
 			if err != nil {
 				log.Println("Failed to connect to remote server:", err)
 				c.AbortWithError(http.StatusInternalServerError, err)
 				return
 			}
-			defer remoteConn.Close()
-
+			fmt.Println("OPEN CONNECTION")
 			// Proxy messages between connections
 			go proxyMessages(conn, remoteConn)
-			proxyMessages(remoteConn, conn)
+			go proxyMessages(remoteConn, conn)
 		} else {
 			conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 			addr := conn.RemoteAddr().String()
