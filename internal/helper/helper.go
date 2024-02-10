@@ -77,7 +77,7 @@ func (h *Helper) GetQueue() ([]byte, error) {
 func (h *Helper) GetFirst() string {
 	for _, m := range h.list.Members() {
 		if len(m.Name) > 6 && m.Name[:len(m.Name)-4] == "sad-server-1" {
-			return m.Address()
+			return string(m.Meta)
 		}
 	}
 	fmt.Println("Can not get first node")

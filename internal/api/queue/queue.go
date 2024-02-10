@@ -88,7 +88,7 @@ func (q *Queue) subscribeEndpoint() gin.HandlerFunc {
 			defer conn.Close()
 
 			// Connect to another server via WebSocket
-			remoteAddr := fmt.Sprintf("ws://%s/subscribe", q.helper.GetFirst()) // Replace with your remote server address
+			remoteAddr := fmt.Sprintf("ws://%s:8080/subscribe", q.helper.GetFirst()) // Replace with your remote server address
 			fmt.Println(remoteAddr)
 			remoteConn, _, err := websocket.DefaultDialer.Dial(remoteAddr, nil)
 			if err != nil {
