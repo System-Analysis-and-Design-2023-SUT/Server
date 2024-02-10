@@ -26,10 +26,8 @@ func (h *Helper) Read(data models.Data) error {
 		}
 
 		defer response.Body.Close()
-		return nil
 	}
-
-	return ErrNodesAreNotReachable
+	return nil
 }
 
 func (h *Helper) Write(data models.Data) error {
@@ -48,10 +46,8 @@ func (h *Helper) Write(data models.Data) error {
 		}
 
 		defer response.Body.Close()
-		return nil
 	}
-
-	return ErrNodesAreNotReachable
+	return nil
 }
 
 func (h *Helper) GetQueue() ([]byte, error) {
