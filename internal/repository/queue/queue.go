@@ -2,6 +2,7 @@ package queue
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/System-Analysis-and-Design-2023-SUT/Server/internal/helper"
 	"github.com/System-Analysis-and-Design-2023-SUT/Server/internal/settings"
@@ -53,6 +54,8 @@ func NewRepository(st *settings.Settings, helper *helper.Helper, q *models.Queue
 // Push will save data into queue
 func (r *Repository) Push(data models.Data, force bool) (models.Data, error) {
 	if len(r.subscriber.List) > 0 {
+		time.Sleep(1 * time.Second)
+
 		err := r.helper.Read(data)
 		if err != nil {
 			return models.Data{}, err

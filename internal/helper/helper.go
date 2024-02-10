@@ -35,6 +35,9 @@ func (h *Helper) Write(data models.Data) error {
 		if m == h.list.LocalNode() {
 			continue
 		}
+		if len(m.Name) > 6 && m.Name[:len(m.Name)-4] == "sad-server-1" {
+			continue
+		}
 
 		var address = string(m.Meta)
 		response, err := http.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", address, data.Key, data.Value),
@@ -46,6 +49,23 @@ func (h *Helper) Write(data models.Data) error {
 		}
 
 		defer response.Body.Close()
+	}
+	for _, m := range h.list.Members() {
+		if m == h.list.LocalNode() {
+			continue
+		}
+		if len(m.Name) > 6 && m.Name[:len(m.Name)-4] == "sad-server-1" {
+			var address = string(m.Meta)
+			response, err := http.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", address, data.Key, data.Value),
+				"application/json",
+				nil,
+			)
+			if err != nil {
+				continue
+			}
+
+			defer response.Body.Close()
+		}
 	}
 	return nil
 }
