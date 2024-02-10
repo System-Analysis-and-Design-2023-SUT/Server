@@ -20,7 +20,7 @@ func (h *Helper) Read(data models.Data) error {
 		}
 
 		var address = string(m.Meta)
-		response, err := http.Get(fmt.Sprintf("http://%s/_pull?key=%s", address, data.Key))
+		response, err := http.Get(fmt.Sprintf("http://%s:8080/_pull?key=%s", address, data.Key))
 		if err != nil {
 			continue
 		}
@@ -39,7 +39,7 @@ func (h *Helper) Write(data models.Data) error {
 		}
 
 		var address = string(m.Meta)
-		response, err := http.Post(fmt.Sprintf("http://%s/_push?key=%s&value=%s", address, data.Key, data.Value),
+		response, err := http.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", address, data.Key, data.Value),
 			"application/json",
 			nil,
 		)
@@ -61,7 +61,7 @@ func (h *Helper) GetQueue() ([]byte, error) {
 		}
 
 		var address = string(m.Meta)
-		response, err := http.Get(fmt.Sprintf("http://%s/queue", address))
+		response, err := http.Get(fmt.Sprintf("http://%s:8080/queue", address))
 		if err != nil {
 			continue
 		}

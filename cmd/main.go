@@ -120,19 +120,34 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 		return nil
 	}
 
-	list.LocalNode().Meta = []byte(fmt.Sprintf("%s:%d", settings.Replica.Hostname[0], settings.Global.APIPort))
-	ip, ipnet, err := net.ParseCIDR(settings.Replica.Subnet)
-	if err != nil {
-		fmt.Println("Error parsing subnet:", err)
-	}
 	ips, er := net.LookupIP(settings.Replica.Hostname[0])
 	if er != nil {
 		fmt.Println("Error:", er)
 	}
 	fmt.Println("MY IP", ips)
 
+	list.LocalNode().Meta = []byte(ips[0].String())
+
+	ip, ipnet, err := net.ParseCIDR(settings.Replica.Subnet)
+	if err != nil {
+		fmt.Println("Error parsing subnet:", err)
+	}
 	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
-		_, err := list.Join([]string{ip.String()})
+		if ip.Equal(ips[0]) {
+			continue
+		}
+
+		response, err := http.Get(fmt.Sprintf("http://%s:8080/-/live", ip.String()))
+		if err != nil {
+			fmt.Println("Errorrr ", response.Status)
+			continue
+		}
+		if response.Status != "200 OK" {
+			fmt.Println("Ignore ", response.Status)
+			continue
+		}
+
+		_, err = list.Join([]string{ip.String()})
 		if err != nil {
 			fmt.Printf("Error joining Cluster node %s with error %v\n", ip.String(), err)
 		} else {
@@ -141,12 +156,8 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	}
 
 	for _, m := range list.Members() {
-		// ips, er := net.LookupIP(m.FullAddress().Name)
-		// if er != nil {
-		// 	fmt.Println("Error:", er)
-		// }
-		// fmt.Println(ips)
-		// m.Addr = ips[0]
+		fmt.Println(m.Meta)
+		m.Addr = net.ParseIP(string(m.Meta))
 
 		fmt.Println("Addr", m.Addr)
 		fmt.Println("Name", m.Name)
