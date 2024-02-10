@@ -125,9 +125,13 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	if err != nil {
 		fmt.Println("Error parsing subnet:", err)
 	}
+	ips, er := net.LookupIP(settings.Replica.Hostname[0])
+	if er != nil {
+		fmt.Println("Error:", er)
+	}
+	fmt.Println("MY IP", ips)
 
 	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
-		fmt.Println(ip)
 		_, err := list.Join([]string{ip.String()})
 		if err != nil {
 			fmt.Printf("Error joining Cluster node %s with error %v\n", ip.String(), err)
