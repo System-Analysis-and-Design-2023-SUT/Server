@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"net"
 	"net/http"
 	"os"
@@ -103,6 +104,15 @@ func inc(ip net.IP) {
 	}
 }
 
+func randString(length int) string {
+	const charset = "0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
 func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	logger.InfoS("Initializing gossoping server.")
 	logger.Infof("memberlist_server Starting listening on port %d.", settings.Global.MemberlistPort)
@@ -112,8 +122,13 @@ func setupGossopingServers(settings *settings.Settings) *memberlist.Memberlist {
 	config.BindAddr = settings.Replica.BindAddress
 	config.LogOutput = nil
 
+	rand.Seed(time.Now().UnixNano())
+	randomString := randString(4)
+
 	nodeName := settings.Replica.Hostname[0]
-	config.Name = nodeName
+	config.Name = nodeName + randomString
+	fmt.Println("MY NAME", config.Name)
+
 	list, err := memberlist.Create(config)
 	if err != nil {
 		logger.Fatalf("Error initializing Cluster node with error %v", err)
