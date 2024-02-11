@@ -14,6 +14,8 @@ type Helper struct {
 }
 
 func (h *Helper) Read(data models.Data) error {
+	fmt.Println("PULLLL")
+	fmt.Println(h.list.Members())
 	for _, m := range h.list.Members() {
 		if m == h.list.LocalNode() {
 			continue
@@ -31,6 +33,8 @@ func (h *Helper) Read(data models.Data) error {
 }
 
 func (h *Helper) Write(data models.Data) error {
+	fmt.Println("PUSHHHH")
+	fmt.Println(h.list.Members())
 	for _, m := range h.list.Members() {
 		if m == h.list.LocalNode() {
 			continue
