@@ -5,7 +5,6 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"sync"
 
 	"github.com/System-Analysis-and-Design-2023-SUT/Server/internal/settings"
 	models "github.com/System-Analysis-and-Design-2023-SUT/Server/models/queue"
@@ -28,22 +27,18 @@ func (h *Helper) Read(data models.Data) error {
 		fmt.Println("Error parsing subnet:", err)
 	}
 
-	var wg sync.WaitGroup
 	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
 		if ip.Equal(ips[0]) {
 			continue
 		}
 
-		wg.Add(1)
-		go func(ip net.IP) {
-			defer wg.Done()
+		response, err := http.Get(fmt.Sprintf("http://%s:8080/_pull?key=%s", ip, data.Key))
+		if err != nil {
+			continue
+		}
 
-			response, _ := http.Get(fmt.Sprintf("http://%s:8080/_pull?key=%s", ip, data.Key))
-			defer response.Body.Close()
-		}(ip)
+		defer response.Body.Close()
 	}
-
-	wg.Wait()
 	return nil
 }
 
@@ -58,7 +53,6 @@ func (h *Helper) Write(data models.Data) error {
 		fmt.Println("Error parsing subnet:", err)
 	}
 
-	var wg sync.WaitGroup
 	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
 		if ip.Equal(ips[0]) {
 			continue
@@ -74,19 +68,13 @@ func (h *Helper) Write(data models.Data) error {
 			continue
 		}
 
-		wg.Add(1)
-		go func(ip net.IP) {
-			defer wg.Done()
+		response, _ := http.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", ip, data.Key, data.Value),
+			"application/json",
+			nil,
+		)
 
-			response, _ := http.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", ip, data.Key, data.Value),
-				"application/json",
-				nil,
-			)
-			defer response.Body.Close()
-		}(ip)
+		defer response.Body.Close()
 	}
-
-	wg.Wait()
 
 	for ip := ip.Mask(ipnet.Mask); ipnet.Contains(ip); inc(ip) {
 		if ip.Equal(ips[0]) {
