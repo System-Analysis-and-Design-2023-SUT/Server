@@ -119,7 +119,14 @@ func (s *Subscriber) Send(data Data) error {
 	}
 
 	err = conn.WriteMessage(websocket.TextMessage, []byte(body))
-	return err
+	if err != nil {
+		_ = s.Unsubscribe(s.List[index])
+		if len(s.List) > 0 {
+			return s.Send(data)
+		}
+		return err
+	}
+	return nil
 }
 
 func NewSubscriber() *Subscriber {

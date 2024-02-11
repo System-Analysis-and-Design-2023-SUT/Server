@@ -62,7 +62,9 @@ func (r *Repository) Push(data models.Data, force bool) (models.Data, error) {
 		}
 
 		err = r.subscriber.Send(data)
-		return data, err
+		if err == nil {
+			return data, err
+		}
 	}
 
 	err := r.queue.Push(data)
