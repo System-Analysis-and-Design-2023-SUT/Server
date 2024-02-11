@@ -27,3 +27,6 @@ bin/*
 settings*.yaml
 settings*.yml
 !settings.yml
+
+# editor configs
+.idea/
