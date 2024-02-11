@@ -163,7 +163,7 @@ func NewHelper(list *memberlist.Memberlist, st *settings.Settings) (*Helper, err
 		list: list,
 		st:   st,
 		client: &http.Client{
-			Timeout: 3 * time.Second,
+			Timeout: 6 * time.Second,
 		},
 	}, nil
 }
