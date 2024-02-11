@@ -102,12 +102,16 @@ func (q *Queue) subscribeEndpoint() gin.HandlerFunc {
 			for {
 				t, msg, err := conn.ReadMessage()
 				if err != nil {
-					logger.Error(err.Error())
+					logger.Error(err.Error(), conn, remoteConn)
+					conn.Close()
+					remoteConn.Close()
 					return
 				}
 
 				if err := remoteConn.WriteMessage(t, msg); err != nil {
-					logger.Error(err.Error())
+					logger.Error(err.Error(), conn, remoteConn)
+					conn.Close()
+					remoteConn.Close()
 					return
 				}
 			}
@@ -158,11 +162,15 @@ func proxyMessages(conn, remoteConn *websocket.Conn) {
 		t, msg, err := remoteConn.ReadMessage()
 		if err != nil {
 			logger.Error(err.Error())
+			conn.Close()
+			remoteConn.Close()
 			return
 		}
 
 		if err := conn.WriteMessage(t, msg); err != nil {
 			logger.Error(err.Error())
+			conn.Close()
+			remoteConn.Close()
 			return
 		}
 	}
