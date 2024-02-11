@@ -6,7 +6,6 @@ import (
 	"net"
 	"net/http"
 	"sync"
-	"time"
 
 	"github.com/System-Analysis-and-Design-2023-SUT/Server/internal/settings"
 	models "github.com/System-Analysis-and-Design-2023-SUT/Server/models/queue"
@@ -14,9 +13,8 @@ import (
 )
 
 type Helper struct {
-	list   *memberlist.Memberlist
-	st     *settings.Settings
-	client *http.Client
+	list *memberlist.Memberlist
+	st   *settings.Settings
 }
 
 func (h *Helper) Read(data models.Data) error {
@@ -40,7 +38,8 @@ func (h *Helper) Read(data models.Data) error {
 		go func(ip net.IP) {
 			defer wg.Done()
 
-			_, _ = h.client.Get(fmt.Sprintf("http://%s:8080/_pull?key=%s", ip, data.Key))
+			response, _ := http.Get(fmt.Sprintf("http://%s:8080/_pull?key=%s", ip, data.Key))
+			defer response.Body.Close()
 		}(ip)
 	}
 
@@ -79,10 +78,11 @@ func (h *Helper) Write(data models.Data) error {
 		go func(ip net.IP) {
 			defer wg.Done()
 
-			_, _ = h.client.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", ip, data.Key, data.Value),
+			response, _ := http.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", ip, data.Key, data.Value),
 				"application/json",
 				nil,
 			)
+			defer response.Body.Close()
 		}(ip)
 	}
 
@@ -103,10 +103,12 @@ func (h *Helper) Write(data models.Data) error {
 			continue
 		}
 
-		_, _ = h.client.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", ip, data.Key, data.Value),
+		response, _ := http.Post(fmt.Sprintf("http://%s:8080/_push?key=%s&value=%s", ip, data.Key, data.Value),
 			"application/json",
 			nil,
 		)
+
+		defer response.Body.Close()
 	}
 	return nil
 }
@@ -162,8 +164,5 @@ func NewHelper(list *memberlist.Memberlist, st *settings.Settings) (*Helper, err
 	return &Helper{
 		list: list,
 		st:   st,
-		client: &http.Client{
-			Timeout: 3 * time.Second,
-		},
 	}, nil
 }
