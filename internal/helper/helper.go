@@ -24,6 +24,7 @@ func (h *Helper) Read(data models.Data) error {
 		var address = string(m.Meta)
 		response, err := http.Get(fmt.Sprintf("http://%s:8080/_pull?key=%s", address, data.Key))
 		if err != nil {
+			fmt.Println(err)
 			continue
 		}
 
@@ -49,6 +50,7 @@ func (h *Helper) Write(data models.Data) error {
 			nil,
 		)
 		if err != nil {
+			fmt.Println(err)
 			continue
 		}
 
@@ -65,6 +67,7 @@ func (h *Helper) Write(data models.Data) error {
 				nil,
 			)
 			if err != nil {
+				fmt.Println(err)
 				continue
 			}
 
