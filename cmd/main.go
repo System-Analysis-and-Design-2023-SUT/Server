@@ -58,7 +58,7 @@ func main() {
 		runGossopingServer(gossopingServer, st.Global.GossopingPort, "gossoping_server")
 	}()
 
-	helper, err := helper.NewHelper(gossopingServer, &st)
+	helper, err := helper.NewHelper(gossopingServer)
 	if err != nil {
 		logger.FatalS("Could not create helper", "error", err.Error())
 	}
