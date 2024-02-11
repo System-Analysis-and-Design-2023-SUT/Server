@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: ghcr.io/system-analysis-and-design-2023-sut/server:2.0.0
+    image: ghcr.io/system-analysis-and-design-2023-sut/server:2.0.1
     deploy:
       mode: replicated
       replicas: 3
