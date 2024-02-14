@@ -1,6 +1,6 @@
 global:
   name: sad-server
-  readTimeout: 2m
+  readTimeout: 3m
   readHeaderTimeout: 2m
   writeTimeout: 2m
   idleTimeout: 2m
